@@ -35,10 +35,13 @@ public class CategoriaController {
         response.setHeader("Location", uri.toASCIIString());
         return ResponseEntity.created(uri).body(obj);
     }
+
     //TODO: Corrigir
     @GetMapping("{codigo}")
-    public Categoria findById(@PathVariable Long id){
-        return this.repository.findById(id).orElse(null);
+    public ResponseEntity<Categoria> findById(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(obj -> ResponseEntity.ok(obj))
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }
