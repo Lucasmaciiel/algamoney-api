@@ -1,7 +1,7 @@
 package com.lmg.algamoneyapi.controller;
 
-import com.lmg.algamoneyapi.model.Categoria;
-import com.lmg.algamoneyapi.repository.CategoriaRepository;
+import com.lmg.algamoneyapi.model.Pessoa;
+import com.lmg.algamoneyapi.repository.PessoaRepository;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +14,16 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categorias")
+@RequestMapping("/pessoas")
 @Builder
-public class CategoriaController {
+public class PessoaController {
 
-    private final CategoriaRepository repository;
-
-    @GetMapping
-    public List<Categoria> findAll() {
-        return repository.findAll();
-    }
+    private final PessoaRepository repository;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Categoria> save(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
-        Categoria obj = repository.save(categoria);
+    public ResponseEntity<Pessoa> save(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
+        Pessoa obj = repository.save(pessoa);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
                 .buildAndExpand(obj.getCodigo()).toUri();
@@ -37,7 +32,7 @@ public class CategoriaController {
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<Categoria> findById(@PathVariable (name = "codigo") Long id) {
+    public ResponseEntity<Pessoa> findByCode(@PathVariable (name = "codigo") Long id) {
         return repository.findById(id)
                 .map(obj -> ResponseEntity.ok(obj))
                 .orElse(ResponseEntity.notFound().build());
