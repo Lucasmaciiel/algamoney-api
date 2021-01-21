@@ -11,7 +11,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -37,5 +36,14 @@ public class PessoaController {
                 .map(obj -> ResponseEntity.ok(obj))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @DeleteMapping("/{codigo}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable (name = "codigo") Long id){
+        repository.deleteById(id);
+    }
+
+
+
 
 }
