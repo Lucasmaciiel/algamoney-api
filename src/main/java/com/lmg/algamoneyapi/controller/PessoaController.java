@@ -50,6 +50,10 @@ public class PessoaController {
         return service.update(id, pessoa);
     }
 
-
+    @PutMapping("/{codigo}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizarPropriedadeAtivo(@PathVariable(name = "codigo") Long id, @RequestBody Boolean ativo){
+        service.atualizarPropriedadeAtivo(id, ativo);
+    }
 
 }
