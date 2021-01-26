@@ -26,7 +26,7 @@ public class PessoaService {
         repository.save(pessoaSalva);
     }
 
-    private Pessoa getPessoaById(Long id) {
+    public Pessoa getPessoaById(Long id) {
         return repository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 }

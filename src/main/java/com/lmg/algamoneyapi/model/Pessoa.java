@@ -1,5 +1,6 @@
 package com.lmg.algamoneyapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,8 +21,14 @@ public class Pessoa {
     private String nome;
 
     @NotNull
-    private Boolean ativo;
+    public Boolean ativo;
 
     @Embedded
     private Endereco endereco;
+
+    @JsonIgnore
+    @Transient
+    public Boolean isInativo(){
+        return !this.ativo;
+    }
 }
