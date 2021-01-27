@@ -3,6 +3,7 @@ package com.lmg.algamoneyapi.controller;
 import com.lmg.algamoneyapi.exceptionHandler.AlgaMoneyExceptionHandler;
 import com.lmg.algamoneyapi.model.Lancamento;
 import com.lmg.algamoneyapi.repository.LancamentoRepository;
+import com.lmg.algamoneyapi.repository.filter.LancamentoFilter;
 import com.lmg.algamoneyapi.service.LancamentoService;
 import com.lmg.algamoneyapi.service.exceptions.PessoaInexistenteOuInativaException;
 import lombok.Builder;
@@ -47,8 +48,8 @@ public class LancamentoController {
     }
 
     @GetMapping
-    public List<Lancamento> findAll() {
-        return repository.findAll();
+    public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
+        return repository.filtrar(lancamentoFilter);
     }
 
     @ExceptionHandler({PessoaInexistenteOuInativaException.class})
