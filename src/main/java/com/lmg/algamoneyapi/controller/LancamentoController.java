@@ -51,6 +51,11 @@ public class LancamentoController {
     public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
         return repository.filtrar(lancamentoFilter);
     }
+    @DeleteMapping("/{codigo}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(name = "codigo") Long codigo){
+            repository.deleteById(codigo);
+    }
 
     @ExceptionHandler({PessoaInexistenteOuInativaException.class})
     public ResponseEntity<Object> handlePessoaInexistenteOuInativaException(PessoaInexistenteOuInativaException ex) {
