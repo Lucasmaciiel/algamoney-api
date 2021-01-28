@@ -9,6 +9,8 @@ import com.lmg.algamoneyapi.service.exceptions.PessoaInexistenteOuInativaExcepti
 import lombok.Builder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,13 +50,14 @@ public class LancamentoController {
     }
 
     @GetMapping
-    public List<Lancamento> pesquisar(LancamentoFilter lancamentoFilter) {
-        return repository.filtrar(lancamentoFilter);
+    public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        return repository.filtrar(lancamentoFilter, pageable);
     }
+
     @DeleteMapping("/{codigo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(name = "codigo") Long codigo){
-            repository.deleteById(codigo);
+    public void delete(@PathVariable(name = "codigo") Long codigo) {
+        repository.deleteById(codigo);
     }
 
     @ExceptionHandler({PessoaInexistenteOuInativaException.class})
