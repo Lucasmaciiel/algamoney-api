@@ -4,6 +4,7 @@ import com.lmg.algamoneyapi.exceptionHandler.AlgaMoneyExceptionHandler;
 import com.lmg.algamoneyapi.model.Lancamento;
 import com.lmg.algamoneyapi.repository.LancamentoRepository;
 import com.lmg.algamoneyapi.repository.filter.LancamentoFilter;
+import com.lmg.algamoneyapi.repository.projection.ResumoLancamento;
 import com.lmg.algamoneyapi.service.LancamentoService;
 import com.lmg.algamoneyapi.service.exceptions.PessoaInexistenteOuInativaException;
 import lombok.Builder;
@@ -43,6 +44,7 @@ public class LancamentoController {
     }
 
     @GetMapping("/{codigo}")
+//    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
     public ResponseEntity<Lancamento> findById(@PathVariable(name = "codigo") Long id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
@@ -50,8 +52,15 @@ public class LancamentoController {
     }
 
     @GetMapping
+//    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
     public Page<Lancamento> pesquisar(LancamentoFilter lancamentoFilter, Pageable pageable) {
         return repository.filtrar(lancamentoFilter, pageable);
+    }
+
+    @GetMapping(params = "resumo")
+//    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and #oauth2.hasScope('read')")
+    public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        return repository.resumir(lancamentoFilter, pageable);
     }
 
     @DeleteMapping("/{codigo}")
