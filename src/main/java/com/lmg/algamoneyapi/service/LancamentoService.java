@@ -9,6 +9,8 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Data
 public class LancamentoService {
@@ -27,7 +29,7 @@ public class LancamentoService {
 
     public Lancamento update(Long codigo, Lancamento lancamento){
         Lancamento lancamentoSalvo = buscarLancamentoExistente(codigo);
-        if (lancamento.getPessoa().equals(lancamentoSalvo.getPessoa())){
+        if (!lancamento.getPessoa().equals(lancamentoSalvo.getPessoa())){
             validarPessoa(lancamento);
         }
         BeanUtils.copyProperties(lancamento, lancamentoSalvo, "codigo");
@@ -35,21 +37,21 @@ public class LancamentoService {
     }
 
     private void validarPessoa(Lancamento lancamento) {
-        Pessoa pessoa = null;
+        Optional<Pessoa> pessoaOpt = null;
         if (lancamento.getPessoa().getCodigo() != null){
-            pessoa = pessoaRepository.getOne(lancamento.getPessoa().getCodigo()); //TODO: trocar pra findOne ou findById
+            pessoaOpt = pessoaRepository.findById(lancamento.getPessoa().getCodigo()); //TODO: trocar pra findOne ou findById
         }
 
-        if (pessoa == null || pessoa.isInativo()){
+        if (!pessoaOpt.isPresent() || pessoaOpt.get().isInativo()){
             throw new PessoaInexistenteOuInativaException();
         }
     }
 
     private Lancamento buscarLancamentoExistente(Long codigo) {
-       Lancamento lancamentoSalvo = lancamentoRepository.getOne(codigo); //TODO: trocar pra findOne ou findById
-       if (lancamentoSalvo == null) {
+       Optional<Lancamento> lancamentoSalvoOpt = lancamentoRepository.findById(codigo); //TODO: trocar pra findOne ou findById
+       if (!lancamentoSalvoOpt.isPresent()) {
            throw new IllegalArgumentException();
        }
-       return lancamentoSalvo;
+       return lancamentoSalvoOpt.get();
     }
 }
