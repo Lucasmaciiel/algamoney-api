@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +32,7 @@ public class LancamentoController {
     private final LancamentoRepository repository;
     private final LancamentoService service;
     private final MessageSource messageSource;
+    private final LancamentoService lancamentoService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -75,5 +77,16 @@ public class LancamentoController {
         String mensagemDesenvolvedor = ex.toString();
         List<AlgaMoneyExceptionHandler.Erro> erros = Arrays.asList(new AlgaMoneyExceptionHandler.Erro(mensagemUsuario, mensagemDesenvolvedor));
         return ResponseEntity.badRequest().body(erros);
+    }
+
+    @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO')")
+    public ResponseEntity<Lancamento> update(@PathVariable Long codigo, @Valid @RequestBody Lancamento lancamento){
+        try {
+            Lancamento lancamentoSalvo = lancamentoService.update(codigo, lancamento);
+            return ResponseEntity.ok(lancamentoSalvo);
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }

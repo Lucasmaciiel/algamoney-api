@@ -6,6 +6,7 @@ import com.lmg.algamoneyapi.repository.LancamentoRepository;
 import com.lmg.algamoneyapi.repository.PessoaRepository;
 import com.lmg.algamoneyapi.service.exceptions.PessoaInexistenteOuInativaException;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,5 +23,33 @@ public class LancamentoService {
             throw new PessoaInexistenteOuInativaException();
         }
         return lancamentoRepository.save(lancamento);
+    }
+
+    public Lancamento update(Long codigo, Lancamento lancamento){
+        Lancamento lancamentoSalvo = buscarLancamentoExistente(codigo);
+        if (lancamento.getPessoa().equals(lancamentoSalvo.getPessoa())){
+            validarPessoa(lancamento);
+        }
+        BeanUtils.copyProperties(lancamento, lancamentoSalvo, "codigo");
+        return lancamentoRepository.save(lancamentoSalvo);
+    }
+
+    private void validarPessoa(Lancamento lancamento) {
+        Pessoa pessoa = null;
+        if (lancamento.getPessoa().getCodigo() != null){
+            pessoa = pessoaRepository.getOne(lancamento.getPessoa().getCodigo()); //TODO: trocar pra findOne ou findById
+        }
+
+        if (pessoa == null || pessoa.isInativo()){
+            throw new PessoaInexistenteOuInativaException();
+        }
+    }
+
+    private Lancamento buscarLancamentoExistente(Long codigo) {
+       Lancamento lancamentoSalvo = lancamentoRepository.getOne(codigo); //TODO: trocar pra findOne ou findById
+       if (lancamentoSalvo == null) {
+           throw new IllegalArgumentException();
+       }
+       return lancamentoSalvo;
     }
 }

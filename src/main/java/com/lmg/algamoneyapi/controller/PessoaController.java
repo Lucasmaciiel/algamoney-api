@@ -4,14 +4,18 @@ import com.lmg.algamoneyapi.model.Pessoa;
 import com.lmg.algamoneyapi.repository.PessoaRepository;
 import com.lmg.algamoneyapi.service.PessoaService;
 import lombok.Builder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/pessoas")
@@ -54,6 +58,17 @@ public class PessoaController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void atualizarPropriedadeAtivo(@PathVariable(name = "codigo") Long id, @RequestBody Boolean ativo){
         service.atualizarPropriedadeAtivo(id, ativo);
+    }
+
+//    @GetMapping
+//    public List<Pessoa> findAll() {
+//        return repository.findAll();
+//    }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+    public Page<Pessoa> pesquisar(@RequestParam(required = false, defaultValue = "%") String nome, Pageable pageable) {
+        return repository.findByNomeContaining(nome, pageable);
     }
 
 }
